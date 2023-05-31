@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -14,26 +14,27 @@ const App = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showLoadMoreButton, setShowLoadMoreButton] = useState(true);
 
-  const fetchImages = useCallback(async () => {
-    if (!searchQuery) return;
-
-    setIsLoading(true);
-
-    try {
-      const newImages = await apiFetchImages(searchQuery, page);
-
-      setImages(prevImages => [...prevImages, ...newImages]);
-      setShowLoadMoreButton(newImages.length === 12);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [searchQuery, page]);
-
   useEffect(() => {
+    const fetchImages = async () => {
+      if (!searchQuery) return;
+  
+      setIsLoading(true);
+  
+      try {
+        const newImages = await apiFetchImages(searchQuery, page);
+  
+        setImages(prevImages => [...prevImages, ...newImages]);
+        setShowLoadMoreButton(newImages.length === 12);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
     fetchImages();
-  }, [fetchImages]);
+  }, [searchQuery, page]);
+  
 
   const handleSubmit = query => {
     setSearchQuery(query);
